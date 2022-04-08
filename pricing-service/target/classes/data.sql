@@ -1,0 +1,4 @@
+--INSERT INTO price (id, currency, price, vehicleid) VALUES (1, 'EUR',10, 1);
+--INSERT INTO price (id, currency, price, vehicleid) VALUES (2, 'EUR',20, 2);
+--INSERT INTO price (id, currency, price, vehicleid) VALUES (3, 'Dollar',10, 3);
+--INSERT INTO price (id, currency, price, vehicleid) VALUES (4, 'EUR',4, 4);
