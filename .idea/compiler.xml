@@ -23,7 +23,7 @@
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">
       <module name="boogle-maps" options="-parameters" />
       <module name="eurekaserver" options="-parameters" />
-      <module name="pricing-service" options="-parameters" />
+      <module name="pricing-service" options="-parameters --add-modules java.base" />
       <module name="vehicles-api" options="-parameters --add-modules java.base" />
     </option>
   </component>

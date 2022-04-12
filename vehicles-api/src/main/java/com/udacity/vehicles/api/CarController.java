@@ -6,6 +6,7 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 import com.udacity.vehicles.domain.car.Car;
 import com.udacity.vehicles.service.CarService;
+
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.List;
@@ -14,6 +15,7 @@ import javax.validation.Valid;
 
 import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.CollectionModel;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -42,6 +44,7 @@ class CarController {
 
     /**
      * Creates a list to store any vehicles.
+     *
      * @return list of vehicles
      */
     @GetMapping
@@ -54,23 +57,24 @@ class CarController {
 
     /**
      * Gets information of a specific car by ID.
+     *
      * @param id the id number of the given vehicle
      * @return all information for the requested vehicle
      */
     @GetMapping("/{id}")
-
     EntityModel<Car> get(@PathVariable Long id) {
         /**
          * TODO: Use the `findById` method from the Car Service to get car information.
          * TODO: Use the `assembler` on that car and return the resulting output.
          *   Update the first line as part of the above implementing.
          */
-
-        return assembler.toModel(new Car());
+        Car car = carService.findById(id);
+        return assembler.toModel(car);
     }
 
     /**
      * Posts information to create a new vehicle in the system.
+     *
      * @param car A new vehicle to add to the system.
      * @return response that the new vehicle was added to the system
      * @throws URISyntaxException if the request contains invalid fields or syntax
@@ -82,20 +86,20 @@ class CarController {
          * TODO: Use the `assembler` on that saved car and return as part of the response.
          *   Update the first line as part of the above implementing.
          */
-
-
+        Car carToSave = carService.save(car);
         final URI uri =
                 MvcUriComponentsBuilder.fromController(getClass())
                         .path("/{id}")
                         .buildAndExpand(car.getId())
                         .toUri();
-        EntityModel<Car> resource = assembler.toModel(new Car());
+        EntityModel<Car> resource = assembler.toModel(carToSave);
         return ResponseEntity.created(uri).body(resource);
     }
 
     /**
      * Updates the information of a vehicle in the system.
-     * @param id The ID number for which to update vehicle information.
+     *
+     * @param id  The ID number for which to update vehicle information.
      * @param car The updated information about the related vehicle.
      * @return response that the vehicle was updated in the system
      */
@@ -107,12 +111,17 @@ class CarController {
          * TODO: Use the `assembler` on that updated car and return as part of the response.
          *   Update the first line as part of the above implementing.
          */
-        EntityModel<Car> resource = assembler.toModel(new Car());
+
+        car.setId(id);
+        Car updatedCar = carService.save(car);
+
+        EntityModel<Car> resource = assembler.toModel(updatedCar);
         return ResponseEntity.ok(resource);
     }
 
     /**
      * Removes a vehicle from the system.
+     *
      * @param id The ID number of the vehicle to remove.
      * @return response that the related vehicle is no longer in the system
      */
@@ -121,6 +130,7 @@ class CarController {
         /**
          * TODO: Use the Car Service to delete the requested vehicle.
          */
-        return ResponseEntity.noContent().build();
+        carService.delete(id);
+        return ResponseEntity.status(HttpStatus.OK).build();
     }
 }
