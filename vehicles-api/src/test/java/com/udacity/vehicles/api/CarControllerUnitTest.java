@@ -43,7 +43,7 @@ import org.springframework.test.web.servlet.MvcResult;
 @SpringBootTest
 @AutoConfigureMockMvc
 @AutoConfigureJsonTesters
-public class CarControllerTest {
+public class CarControllerUnitTest {
 
     @Autowired
     private MockMvc mvc;

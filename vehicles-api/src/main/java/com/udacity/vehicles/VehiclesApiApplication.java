@@ -12,12 +12,14 @@ import org.springframework.cloud.netflix.eureka.EnableEurekaClient;
 import org.springframework.context.annotation.Bean;
 import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 import org.springframework.web.reactive.function.client.WebClient;
+import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 
 /**
  * Launches a Spring Boot application for the Vehicles API,
  * initializes the car manufacturers in the database,
  * and launches web clients to communicate with maps and pricing.
  */
+@EnableWebMvc
 @SpringBootApplication
 @EnableJpaAuditing
 @EnableEurekaClient

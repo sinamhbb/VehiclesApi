@@ -80,7 +80,7 @@ class CarController {
      * @throws URISyntaxException if the request contains invalid fields or syntax
      */
     @PostMapping
-    ResponseEntity<?> post(@Valid @RequestBody Car car) throws URISyntaxException {
+    ResponseEntity<EntityModel<Car>> post(@Valid @RequestBody Car car) throws URISyntaxException {
         /**
          * TODO: Use the `save` method from the Car Service to save the input car.
          * TODO: Use the `assembler` on that saved car and return as part of the response.
