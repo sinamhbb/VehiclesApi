@@ -30,7 +30,7 @@ import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
 
 @RunWith(SpringRunner.class)
-@SpringBootTest(classes = VehiclesApiApplication.class,webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
+@SpringBootTest(classes = VehiclesApiApplication.class, webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
 @AutoConfigureMockMvc
 @AutoConfigureJsonTesters
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
@@ -52,32 +52,45 @@ public class CarControllerIntegrationTest {
 
     @Before
     public void before() {
-        baseUrl= "http://localhost:" + port+ "/cars";
+        baseUrl = "http://localhost:" + port + "/cars";
     }
 
     @Test
-    public void a_createCar() {
+    public void a_createCarTest() {
         Car car = getCar();
         HttpEntity<Car> request = new HttpEntity<>(car);
-        ResponseEntity<Car> response = restTemplate.postForEntity(baseUrl,request, Car.class);
+        ResponseEntity<Car> response = restTemplate.postForEntity(baseUrl, request, Car.class);
         System.out.println("response: " + Objects.requireNonNull(response.getBody()).getCondition());
-        assertThat(null,is(not(Objects.requireNonNull(response.getBody()).getCondition())));
+        assertThat(null, is(not(Objects.requireNonNull(response.getBody()).getCondition())));
     }
 
     @Test
-    public void  b_findCar() throws Exception {
-        ResponseEntity<Car> response = restTemplate.getForEntity(baseUrl+"/1", Car.class);
-        assertThat(1L,is(response.getBody().getId()));
+    public void b_findCarTest() throws Exception {
+        ResponseEntity<Car> response = restTemplate.getForEntity(baseUrl + "/1", Car.class);
+        assertThat(1L, is(response.getBody().getId()));
         assertThat(null, is(not(response.getBody().getLocation().getZip())));
 
         testZip = response.getBody().getLocation().getZip();
         System.out.println("Zip: " + testZip);
 
     }
+
     @Test
-    public void c_checkLocation() {
-        ResponseEntity<Car> response = restTemplate.getForEntity(baseUrl+"/1", Car.class);
+    public void c_checkCarLocationTest() {
+        ResponseEntity<Car> response = restTemplate.getForEntity(baseUrl + "/1", Car.class);
         assertThat(response.getBody().getLocation().getZip(), is(testZip));
+    }
+
+    @Test
+    public void d_updateCarLocationTest() {
+        Car car = getCar();
+        car.setLocation(new Location(1D, 1D));
+        HttpEntity<Car> request = new HttpEntity<>(car);
+        restTemplate.put(baseUrl + "/1", request, Car.class);
+
+
+        ResponseEntity<Car> response = restTemplate.getForEntity(baseUrl + "/1", Car.class);
+        assertThat(testZip, is(not(response.getBody().getLocation().getZip())));
     }
 
     private Car getCar() {

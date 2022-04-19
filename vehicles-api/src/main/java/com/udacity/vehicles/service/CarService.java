@@ -6,6 +6,7 @@ import com.udacity.vehicles.domain.car.Car;
 import com.udacity.vehicles.domain.car.CarRepository;
 
 import java.util.List;
+import java.util.Objects;
 
 import org.springframework.stereotype.Service;
 
@@ -72,7 +73,7 @@ public class CarService {
          * Note: The Location class file also uses @transient for the address,
          * meaning the Maps service needs to be called each time for the address.
          */
-        car.setLocation(mapsClient.getAddress(car.getLocation()));
+        car.setLocation(mapsClient.getAddress(id,car.getLocation()));
         return car;
     }
 
@@ -87,12 +88,22 @@ public class CarService {
             return carRepository.findById(car.getId())
                     .map(carToBeUpdated -> {
                         carToBeUpdated.setDetails(car.getDetails());
-                        carToBeUpdated.setLocation(car.getLocation());
+
+                        if (!Objects.equals(carToBeUpdated.getLocation().getLat(), car.getLocation().getLat()) || !Objects.equals(carToBeUpdated.getLocation().getLon(), car.getLocation().getLon())) {
+                            carToBeUpdated.setLocation(mapsClient.setAddress(car.getId(),car.getLocation()));
+                        } else {
+                            carToBeUpdated.setLocation(car.getLocation());
+                        }
+
                         return carRepository.save(carToBeUpdated);
                     }).orElseThrow(CarNotFoundException::new);
         }
-
-        return carRepository.save(car);
+//        car.setLocation(mapsClient.setAddress(car.getId(),car.getLocation()));
+//        System.out.println("Car Id: " + car.getId());
+        Car savedCar =  carRepository.save(car);
+        System.out.println("Car Id: " + savedCar.getId());
+        savedCar.setLocation(mapsClient.setAddress(savedCar.getId(),car.getLocation()));
+        return carRepository.save(savedCar);
     }
 
     /**
