@@ -8,6 +8,7 @@ import com.udacity.vehicles.domain.car.CarRepository;
 import java.util.List;
 import java.util.Objects;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 /**
@@ -118,9 +119,12 @@ public class CarService {
          */
         Car car = carRepository.findById(id).orElseThrow(CarNotFoundException::new);
 
+
         /**
          * TODO: Delete the car from the repository.
          */
+        HttpStatus result = mapsClient.deleteAddress(car.getId());
+        System.out.println("Boogle delete Status : " + result);
         carRepository.deleteById(car.getId());
     }
 }

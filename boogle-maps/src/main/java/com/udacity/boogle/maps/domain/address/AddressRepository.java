@@ -9,5 +9,5 @@ import java.util.Optional;
 
 @Repository
 public interface AddressRepository extends JpaRepository<Address, Long> {
-    public Optional<Address> getAddressByVehicleId(Long vehicleId);
+    Optional<Address> getAddressByVehicleId(Long vehicleId);
 }

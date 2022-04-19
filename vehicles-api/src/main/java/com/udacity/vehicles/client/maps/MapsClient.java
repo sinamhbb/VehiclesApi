@@ -1,12 +1,17 @@
 package com.udacity.vehicles.client.maps;
 
 import com.udacity.vehicles.domain.Location;
+
 import java.util.Objects;
+
 import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
+
+import javax.wsdl.extensions.http.HTTPAddress;
 
 /**
  * Implements a class to interface with the Maps Client for location data.
@@ -20,24 +25,25 @@ public class MapsClient {
     private final ModelMapper mapper;
 
     public MapsClient(WebClient maps,
-            ModelMapper mapper) {
+                      ModelMapper mapper) {
         this.client = maps;
         this.mapper = mapper;
     }
 
     /**
      * Gets an address from the Maps client, given latitude and longitude.
+     *
      * @param location An object containing "lat" and "lon" of location
      * @return An updated location including street, city, state and zip,
-     *   or an exception message noting the Maps service is down
+     * or an exception message noting the Maps service is down
      */
-    public Location getAddress(Long vehicleId,Location location) {
+    public Location getAddress(Long vehicleId, Location location) {
         try {
             Address address = client
                     .get()
                     .uri(uriBuilder -> uriBuilder
                             .path("/maps/")
-                            .queryParam("vehicleId",vehicleId)
+                            .queryParam("vehicleId", vehicleId)
                             .build()
                     )
                     .retrieve().bodyToMono(Address.class).block();
@@ -51,13 +57,13 @@ public class MapsClient {
         }
     }
 
-    public Location setAddress(Long vehicleId,Location location) {
+    public Location setAddress(Long vehicleId, Location location) {
         try {
             Address address = client
                     .post()
                     .uri(uriBuilder -> uriBuilder
                             .path("/maps/")
-                            .queryParam("vehicleId",vehicleId)
+                            .queryParam("vehicleId", vehicleId)
                             .queryParam("lat", location.getLat())
                             .queryParam("lon", location.getLon())
                             .build()
@@ -73,6 +79,27 @@ public class MapsClient {
         }
     }
 
+
+    public HttpStatus deleteAddress(Long vehicleId) {
+        try {
+            HttpStatus status = Objects.requireNonNull(client
+                            .delete()
+                            .uri(uriBuilder -> uriBuilder
+                                    .path("/maps/")
+                                    .queryParam("vehicleId", vehicleId)
+                                    .build()
+                            )
+                            .retrieve()
+                            .toBodilessEntity()
+                            .block())
+                    .getStatusCode();
+//                    .bodyToMono(Address.class).block();
+            return status;
+        } catch (Exception e) {
+            log.warn("Map service is down");
+            return HttpStatus.BAD_REQUEST;
+        }
+    }
 
 
 }
