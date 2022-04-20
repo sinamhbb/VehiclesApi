@@ -19,7 +19,6 @@ public class MapsController {
     @GetMapping
     public Address get(@RequestParam Long vehicleId) {
         return mapService.getAddressByVehicleId(vehicleId);
-
     }
 
     @PostMapping

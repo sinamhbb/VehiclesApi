@@ -24,10 +24,7 @@ public class CarService {
     private final MapsClient mapsClient;
 
     public CarService(CarRepository carRepository, PriceClient priceClient, MapsClient mapsClient) {
-        /**
-         * TODO: Add the Maps and Pricing Web Clients you create
-         *   in `VehiclesApiApplication` as arguments and set them here.
-         */
+
         this.carRepository = carRepository;
         this.priceClient = priceClient;
         this.mapsClient = mapsClient;
@@ -96,14 +93,20 @@ public class CarService {
                             carToBeUpdated.setLocation(car.getLocation());
                         }
 
+                        if (!Objects.equals(carToBeUpdated.getPrice(), car.getPrice())) {
+                            carToBeUpdated.setPrice(priceClient.setPrice(car.getId()));
+                        } else {
+                            carToBeUpdated.setPrice(car.getPrice());
+                        }
+
                         return carRepository.save(carToBeUpdated);
                     }).orElseThrow(CarNotFoundException::new);
         }
 //        car.setLocation(mapsClient.setAddress(car.getId(),car.getLocation()));
 //        System.out.println("Car Id: " + car.getId());
         Car savedCar =  carRepository.save(car);
-        System.out.println("Car Id: " + savedCar.getId());
         savedCar.setLocation(mapsClient.setAddress(savedCar.getId(),car.getLocation()));
+        savedCar.setPrice(priceClient.setPrice(savedCar.getId()));
         return carRepository.save(savedCar);
     }
 
@@ -123,8 +126,10 @@ public class CarService {
         /**
          * TODO: Delete the car from the repository.
          */
-        HttpStatus result = mapsClient.deleteAddress(car.getId());
-        System.out.println("Boogle delete Status : " + result);
+        HttpStatus mapResult = mapsClient.deleteAddress(car.getId());
+        HttpStatus priceResult = priceClient.deletePrice(car.getId());
+        System.out.println("Boogle delete Status : " + mapResult);
+        System.out.println("Price delete Status : " + priceResult);
         carRepository.deleteById(car.getId());
     }
 }

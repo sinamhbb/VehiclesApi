@@ -2,8 +2,11 @@ package com.udacity.vehicles.client.prices;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
+
+import java.util.Objects;
 
 /**
  * Implements a class to interface with the Pricing Client for price data.
@@ -47,5 +50,40 @@ public class PriceClient {
             log.error("Unexpected error retrieving price for vehicle {}", vehicleId, e);
         }
         return "(consult price)";
+    }
+
+    public String setPrice(Long vehicleId) {
+        try {
+            Price price = client
+                    .post()
+                    .uri(uriBuilder -> uriBuilder
+                            .path("services/price/")
+                            .queryParam("vehicleId", vehicleId)
+                            .build()
+                    )
+                    .retrieve().bodyToMono(Price.class).block();
+
+            return String.format("%s %s", price.getCurrency(), price.getPrice());
+
+        } catch (Exception e) {
+            log.error("Unexpected error retrieving price for vehicle {}", vehicleId, e);
+        }
+        return "(consult price)";
+    }
+
+    public HttpStatus deletePrice(Long vehicleId) {
+        try {
+            return Objects.requireNonNull(client
+                    .delete()
+                    .uri(uriBuilder -> uriBuilder
+                            .path("services/price/")
+                            .queryParam("vehicleId", vehicleId)
+                            .build()
+                    )
+                    .retrieve().toBodilessEntity().block()).getStatusCode();
+        } catch (Exception e) {
+            log.error("Unexpected error retrieving price for vehicle {}", vehicleId, e);
+            return HttpStatus.BAD_REQUEST;
+        }
     }
 }

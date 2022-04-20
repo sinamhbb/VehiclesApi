@@ -1,10 +1,14 @@
 package com.udacity.pricing.service;
 
 import com.udacity.pricing.entity.Price;
+import com.udacity.pricing.repository.PriceRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.Map;
+import java.util.Optional;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.stream.Collectors;
 import java.util.stream.LongStream;
@@ -12,7 +16,11 @@ import java.util.stream.LongStream;
 /**
  * Implements the pricing service to get prices for each vehicle.
  */
+@Service
 public class PricingService {
+
+    @Autowired
+    PriceRepository priceRepository;
 
     /**
      * Holds {ID: Price} pairings (current implementation allows for 20 vehicles)
@@ -22,19 +30,29 @@ public class PricingService {
             .mapToObj(i -> new Price("USD", randomPrice(), i))
             .collect(Collectors.toMap(Price::getVehicleId, p -> p));
 
-    /**
-     * If a valid vehicle ID, gets the price of the vehicle from the stored array.
-     * @param vehicleId ID number of the vehicle the price is requested for.
-     * @return price of the requested vehicle
-     * @throws PriceException vehicleID was not found
-     */
-    public static Price getPrice(Long vehicleId) throws PriceException {
+
+
+    public Price savePrice(Long vehicleId) {
+        Price price = PRICES.get(vehicleId);
+        return priceRepository.save(price);
+    }
+
+    public Optional<Price> getPrice(Long vehicleId) throws PriceException {
 
         if (!PRICES.containsKey(vehicleId)) {
             throw new PriceException("Cannot find price for Vehicle " + vehicleId);
         }
 
-        return PRICES.get(vehicleId);
+        return Optional.ofNullable(priceRepository.findById(vehicleId).orElseThrow(() -> new PriceException("Cannot find price for Vehicle " + vehicleId)));
+    }
+
+    public void deletePrice(Long vehicleId) throws PriceException {
+//        if (!PRICES.containsKey(vehicleId)) {
+//            throw new PriceException("Cannot find price for Vehicle " + vehicleId);
+//        }
+        Optional<Price> priceToDelete = priceRepository.getPriceByVehicleId(vehicleId);
+        priceToDelete.orElseThrow(() -> new PriceException("Cannot find price for Vehicle " + vehicleId));
+        priceToDelete.ifPresent(price -> priceRepository.deleteById(price.getId()));
     }
 
     /**
@@ -45,5 +63,4 @@ public class PricingService {
         return new BigDecimal(ThreadLocalRandom.current().nextDouble(1, 5))
                 .multiply(new BigDecimal(5000d)).setScale(2, RoundingMode.HALF_UP);
     }
-
 }

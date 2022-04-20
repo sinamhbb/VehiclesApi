@@ -5,10 +5,7 @@ import com.udacity.pricing.entity.Price;
 import com.udacity.pricing.service.PriceException;
 import com.udacity.pricing.service.PricingService;
 import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
 /**
@@ -17,6 +14,11 @@ import org.springframework.web.server.ResponseStatusException;
 @RestController
 @RequestMapping("/services/price")
 public class PricingController {
+    private final PricingService pricingService;
+
+    public PricingController(PricingService pricingService) {
+        this.pricingService = pricingService;
+    }
 
     /**
      * Gets the price for a requested vehicle.
@@ -26,11 +28,26 @@ public class PricingController {
     @GetMapping
     public Price get(@RequestParam Long vehicleId) {
         try {
-            return PricingService.getPrice(vehicleId);
+            return pricingService.getPrice(vehicleId).get();
         } catch (PriceException ex) {
             throw new ResponseStatusException(
                     HttpStatus.NOT_FOUND, "Price Not Found", ex);
         }
+    }
 
+    @PostMapping
+    public Price post(@RequestParam Long vehicleId) {
+            return pricingService.savePrice(vehicleId);
+    }
+
+    @DeleteMapping
+    public HttpStatus delete(@RequestParam Long vehicleId) {
+        try {
+             pricingService.deletePrice(vehicleId);
+             return HttpStatus.OK;
+        } catch (PriceException ex) {
+            throw new ResponseStatusException(
+                    HttpStatus.NOT_FOUND, "Price Not Found", ex);
+        }
     }
 }

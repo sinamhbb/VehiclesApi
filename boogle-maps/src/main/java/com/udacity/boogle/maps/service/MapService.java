@@ -39,6 +39,7 @@ public class MapService {
     public void deleteAddressByVehicleId(Long vehicleId) {
         Optional<Address> addressToDelete = addressRepository.getAddressByVehicleId(vehicleId);
         addressToDelete.ifPresent(address -> addressRepository.deleteById(address.getId()));
+
     }
 
     private Address getRandom(Long vehicleId) {
