@@ -2,6 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
+      <module fileurl="file://$PROJECT_DIR$/Ordering-Service/Ordering-Service.iml" filepath="$PROJECT_DIR$/Ordering-Service/Ordering-Service.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/VehiclesApi.iml" filepath="$PROJECT_DIR$/.idea/VehiclesApi.iml" />
       <module fileurl="file://$PROJECT_DIR$/boogle-maps/boogle-maps.iml" filepath="$PROJECT_DIR$/boogle-maps/boogle-maps.iml" />
       <module fileurl="file://$PROJECT_DIR$/eurekaserver/eurekaserver.iml" filepath="$PROJECT_DIR$/eurekaserver/eurekaserver.iml" />
