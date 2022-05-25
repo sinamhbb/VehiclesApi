@@ -93,6 +93,18 @@ public class CarControllerIntegrationTest {
         assertThat(testZip, is(not(response.getBody().getLocation().getZip())));
     }
 
+    @Test
+    public void e_updateCarConditionTest() {
+        Car car = getCar();
+        car.setCondition(Condition.NEW);
+        HttpEntity<Car> request = new HttpEntity<>(car);
+        restTemplate.put(baseUrl + "/1", request, Car.class);
+
+
+        ResponseEntity<Car> response = restTemplate.getForEntity(baseUrl + "/1", Car.class);
+        assertThat(Condition.NEW, is(response.getBody().getCondition()));
+    }
+
     private Car getCar() {
         Car car = new Car();
 

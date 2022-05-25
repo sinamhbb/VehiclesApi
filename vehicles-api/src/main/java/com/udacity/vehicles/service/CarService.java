@@ -91,8 +91,6 @@ public class CarService {
                         if (!Objects.equals(savedCar.getLocation().getLat(), car.getLocation().getLat()) || !Objects.equals(savedCar.getLocation().getLon(), car.getLocation().getLon())) {
                             car.setLocation(mapsClient.setAddress(car.getId(),car.getLocation()));
                         }
-                        System.out.println("car price in service " + car.getPrice());
-                        System.out.println("saved car price in service " + savedCar.getPrice());
                         if (!Objects.equals(savedCar.getPrice(), car.getPrice())) {
                             car.setPrice(priceClient.setPrice(car.getId()));
                         }

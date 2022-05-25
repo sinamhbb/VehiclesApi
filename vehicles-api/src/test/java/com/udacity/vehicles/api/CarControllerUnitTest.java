@@ -149,6 +149,18 @@ public class CarControllerUnitTest {
                         .accept(MediaType.APPLICATION_JSON)
         ).andDo(print()).andExpect(status().isOk());
     }
+
+    @Test
+    public void updateCar() throws Exception {
+        Car car = getCar();
+        car.setCondition(Condition.NEW);
+        mvc.perform(
+                put(new URI("/cars/1"))
+                        .content(json.write(car).getJson())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON)
+        ).andDo(print()).andExpect(status().isOk());
+    }
     /**
      * Creates an example Car object for use in testing.
      *
