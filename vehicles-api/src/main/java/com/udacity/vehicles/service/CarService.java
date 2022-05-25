@@ -82,24 +82,21 @@ public class CarService {
      * @return the new/updated car is stored in the repository
      */
     public Car save(Car car) {
+
         if (car.getId() != null) {
             return carRepository.findById(car.getId())
-                    .map(carToBeUpdated -> {
-                        carToBeUpdated.setDetails(car.getDetails());
+                    .map(savedCar -> {
+                        savedCar.setDetails(car.getDetails());
 
-                        if (!Objects.equals(carToBeUpdated.getLocation().getLat(), car.getLocation().getLat()) || !Objects.equals(carToBeUpdated.getLocation().getLon(), car.getLocation().getLon())) {
-                            carToBeUpdated.setLocation(mapsClient.setAddress(car.getId(),car.getLocation()));
-                        } else {
-                            carToBeUpdated.setLocation(car.getLocation());
+                        if (!Objects.equals(savedCar.getLocation().getLat(), car.getLocation().getLat()) || !Objects.equals(savedCar.getLocation().getLon(), car.getLocation().getLon())) {
+                            car.setLocation(mapsClient.setAddress(car.getId(),car.getLocation()));
                         }
-
-                        if (!Objects.equals(carToBeUpdated.getPrice(), car.getPrice())) {
-                            carToBeUpdated.setPrice(priceClient.setPrice(car.getId()));
-                        } else {
-                            carToBeUpdated.setPrice(car.getPrice());
+                        System.out.println("car price in service " + car.getPrice());
+                        System.out.println("saved car price in service " + savedCar.getPrice());
+                        if (!Objects.equals(savedCar.getPrice(), car.getPrice())) {
+                            car.setPrice(priceClient.setPrice(car.getId()));
                         }
-
-                        return carRepository.save(carToBeUpdated);
+                        return carRepository.save(car);
                     }).orElseThrow(CarNotFoundException::new);
         }
 //        car.setLocation(mapsClient.setAddress(car.getId(),car.getLocation()));
@@ -112,7 +109,6 @@ public class CarService {
 
     /**
      * Deletes a given car by ID
-     *
      * @param id the ID number of the car to delete
      */
     public void delete(Long id) {

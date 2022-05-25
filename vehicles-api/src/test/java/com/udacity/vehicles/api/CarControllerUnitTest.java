@@ -103,7 +103,7 @@ public class CarControllerUnitTest {
                                 .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
 //              How to check the response in json : https://github.com/spring-projects/spring-hateoas-examples/blob/main/basics/src/test/java/org/springframework/hateoas/examples/EmployeeControllerTests.java
-                .andExpect(jsonPath("$._embedded.carList[0].details.model", is("Impala")))
+                .andExpect(jsonPath("$.content[0].details.model", is("Impala")))
                 .andDo(print())
                 .andReturn();
         verify(carService,times(1)).list();

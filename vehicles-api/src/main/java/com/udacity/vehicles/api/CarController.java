@@ -113,6 +113,7 @@ class CarController {
          */
 
         car.setId(id);
+        System.out.println("car price" + car.getPrice());
         Car updatedCar = carService.save(car);
 
         EntityModel<Car> resource = assembler.toModel(updatedCar);
