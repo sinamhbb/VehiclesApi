@@ -86,8 +86,6 @@ public class CarService {
         if (car.getId() != null) {
             return carRepository.findById(car.getId())
                     .map(savedCar -> {
-                        savedCar.setDetails(car.getDetails());
-
                         if (!Objects.equals(savedCar.getLocation().getLat(), car.getLocation().getLat()) || !Objects.equals(savedCar.getLocation().getLon(), car.getLocation().getLon())) {
                             car.setLocation(mapsClient.setAddress(car.getId(),car.getLocation()));
                         }
